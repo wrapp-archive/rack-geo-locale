@@ -20,7 +20,9 @@ module Rack
 
           locale, q = language_range.split(";q=")
 
-          OpenStruct.new(:language => locale.strip, :q => q)
+          language = locale.strip.split("-").first
+
+          OpenStruct.new(:language => language, :q => q)
         end.sort {|x, y| y.q <=> x.q}.first.language
       end
   end

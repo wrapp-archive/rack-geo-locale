@@ -8,8 +8,24 @@ def app
 end
 
 describe Rack::Locale do
-  it "should respond with hello" do
-    get '/'
-    last_response.body.should == "hello"
+  before do
+  end
+
+  xit "should set the REMOTE_ADDR header" do
+    get '/', {}, {"REMOTE_ADDR" => "10.0.0.1", "HTTP_ACCEPT_LANGUAGE" => "en"}
+    last_request.env["locale.language"].should == "en"
+    last_request.ip.should == "10.0.0.1"
+  end
+
+  it "should parse HTTP_ACCEPT_LANGUAGE 'en'" do
+    get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "en"}
+    last_request.env["locale.language"].should == "en"
+  end
+
+  it "should parse HTTP_ACCEPT_LANGUAGE 'sv'" do
+    get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "sv"}
+    last_request.env["locale.language"].should == "sv"
+  end
+
   end
 end

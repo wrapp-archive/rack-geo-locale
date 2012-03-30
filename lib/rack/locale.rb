@@ -5,9 +5,14 @@ module Rack
     end
 
     def call(env)
-      status, headers, response = @app.call(env)
+      env["locale.language"] = parse_language(env)
 
-      [status, headers, response]
+      @app.call(env)
     end
+
+    private
+      def parse_language(env)
+        env["HTTP_ACCEPT_LANGUAGE"]
+      end
   end
 end

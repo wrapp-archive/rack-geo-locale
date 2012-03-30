@@ -4,7 +4,7 @@ require 'rack/locale'
 include Rack::Test::Methods
 
 def app
-  lambda {|env| [200, {}, 'hello']}
+  Rack::Locale.new(proc {|env| [200, {}, 'hello']})
 end
 
 describe Rack::Locale do

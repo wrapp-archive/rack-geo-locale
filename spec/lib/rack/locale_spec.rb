@@ -27,5 +27,13 @@ describe Rack::Locale do
     last_request.env["locale.language"].should == "sv"
   end
 
+  it "should parse HTTP_ACCEPT_LANGUAGE 'sv, en'" do
+    get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "sv, en"}
+    last_request.env["locale.language"].should == "sv"
+  end
+
+  it "should parse HTTP_ACCEPT_LANGUAGE 'en;q=0.4, de;q=0.7'" do
+    get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "en;q=0.4, de;q=0.7"}
+    last_request.env["locale.language"].should == "de"
   end
 end

@@ -13,37 +13,37 @@ describe Rack::Locale do
 
   xit "should set the REMOTE_ADDR header" do
     get '/', {}, {"REMOTE_ADDR" => "10.0.0.1", "HTTP_ACCEPT_LANGUAGE" => "en"}
-    last_request.env["locale.language"].should == "en"
+    last_request.env["locale.languages"].should == "en"
     last_request.ip.should == "10.0.0.1"
   end
 
   it "should parse HTTP_ACCEPT_LANGUAGE 'en'" do
     get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "en"}
-    last_request.env["locale.language"].should == "en"
+    last_request.env["locale.languages"].should == "en"
   end
 
   it "should parse HTTP_ACCEPT_LANGUAGE 'sv'" do
     get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "sv"}
-    last_request.env["locale.language"].should == "sv"
+    last_request.env["locale.languages"].should == "sv"
   end
 
   it "should parse HTTP_ACCEPT_LANGUAGE 'sv;q=0.1, en'" do
     get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "sv;q=0.1, en"}
-    last_request.env["locale.language"].should == "en"
+    last_request.env["locale.languages"].should == "en"
   end
 
   it "should parse HTTP_ACCEPT_LANGUAGE 'sv, en'" do
     get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "sv, en"}
-    last_request.env["locale.language"].should == "sv"
+    last_request.env["locale.languages"].should == "sv"
   end
 
   it "should parse HTTP_ACCEPT_LANGUAGE 'en;q=0.4, de;q=0.7'" do
     get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "en;q=0.4, de;q=0.7"}
-    last_request.env["locale.language"].should == "de"
+    last_request.env["locale.languages"].should == "de"
   end
 
   it "should parse HTTP_ACCEPT_LANGUAGE 'en-US;q=0.7'" do
     get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "en-US;q=0.7"}
-    last_request.env["locale.language"].should == "en"
+    last_request.env["locale.languages"].should == "en"
   end
 end

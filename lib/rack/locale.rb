@@ -7,13 +7,13 @@ module Rack
     end
 
     def call(env)
-      env["locale.language"] = parse_language(env)
+      env["locale.languages"] = parse_languages(env)
 
       @app.call(env)
     end
 
     private
-      def parse_language(env)
+      def parse_languages(env)
         language_ranges = env["HTTP_ACCEPT_LANGUAGE"].split(",")
         language_ranges.map do |language_range|
           language_range += ';q=1.0' unless language_range =~ /;q=\d+\.\d+$/

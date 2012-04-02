@@ -12,19 +12,31 @@ describe Rack::Locale do
   describe "GeoIP" do
     before do
       geoip = double("geoip")
-      geoip.stub(:country).with("10.0.0.1").and_return("foo")
+      geoip.stub(:country).with("10.0.0.1").and_return(GeoIP::Country.new("10.0.0.1", "10.0.0.1", 191, "SE", "SWE", "Sweden", "EU"))
+      geoip.stub(:country).with("10.0.0.2").and_return(GeoIP::Country.new("10.0.0.2", "10.0.0.2", 225, "US", "USA", "USA", "NA"))
+      geoip.stub(:country).with("10.0.0.3").and_return(GeoIP::Country.new("10.0.0.3", "10.0.0.3", 0, "--", "---", "N/A", "--"))
 
       GeoIP.stub :new => geoip
     end
 
-    it "should stub correctly" do
-      GeoIP.new.country("10.0.0.1").should == "foo"
+    it "should handle an empty REMOTE_ADDR field" do
+      get '/', {}, {"REMOTE_ADDR" => nil}
+      last_request.env["locale.country"].should == nil
     end
 
-    xit "should set the REMOTE_ADDR header" do
+    it "should resolve 10.0.0.1 to SE" do
       get '/', {}, {"REMOTE_ADDR" => "10.0.0.1"}
-      last_request.env["locale.country"].should == ["us"]
-      last_request.ip.should == "10.0.0.1"
+      last_request.env["locale.country"].should == "SE"
+    end
+
+    it "should resolve 10.0.0.2 to US" do
+      get '/', {}, {"REMOTE_ADDR" => "10.0.0.2"}
+      last_request.env["locale.country"].should == "US"
+    end
+
+    it "should resolve 10.0.0.3 to nil" do
+      get '/', {}, {"REMOTE_ADDR" => "10.0.0.3"}
+      last_request.env["locale.country"].should == nil
     end
   end
 

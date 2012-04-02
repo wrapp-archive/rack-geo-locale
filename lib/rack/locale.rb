@@ -14,6 +14,7 @@ module Rack
 
     private
       def parse_languages(env)
+        env["HTTP_ACCEPT_LANGUAGE"] ||= ""
         language_ranges = env["HTTP_ACCEPT_LANGUAGE"].split(",")
         language_ranges.map do |language_range|
           language_range += ';q=1.0' unless language_range =~ /;q=\d+\.\d+$/

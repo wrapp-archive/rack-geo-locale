@@ -20,6 +20,11 @@ describe Rack::Locale do
   end
 
   describe "parsing HTTP_ACCEPT_LANGUAGE" do
+    it "should return an empty result if no HTTP_ACCEPT_LANGUAGE passed" do
+      get '/', {}, {}
+      last_request.env["locale.languages"].should == []
+    end
+
     it "should parse HTTP_ACCEPT_LANGUAGE 'en'" do
       get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "en"}
       last_request.env["locale.languages"].should == ["en"]

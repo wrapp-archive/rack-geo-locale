@@ -40,8 +40,8 @@ module Rack
 
           language = locale.strip.split("-").first
 
-          OpenStruct.new(:language => language, :q => q)
-        end.sort {|x, y| y.q <=> x.q}.map{|lr| lr.language}
+          {:language => language, :q => q}
+        end.sort {|x, y| y[:q] <=> x[:q]}.map{|lr| lr[:language]}
       end
   end
 end

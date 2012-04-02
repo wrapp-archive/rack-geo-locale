@@ -1,5 +1,6 @@
 require 'rack/test'
 require 'rack/locale'
+require 'geoip'
 
 include Rack::Test::Methods
 
@@ -8,8 +9,16 @@ def app
 end
 
 describe Rack::Locale do
-  describe "" do
+  describe "GeoIP" do
     before do
+      geoip = double("geoip")
+      geoip.stub(:country).with("10.0.0.1").and_return("foo")
+
+      GeoIP.stub :new => geoip
+    end
+
+    it "should stub correctly" do
+      GeoIP.new.country("10.0.0.1").should == "foo"
     end
 
     xit "should set the REMOTE_ADDR header" do

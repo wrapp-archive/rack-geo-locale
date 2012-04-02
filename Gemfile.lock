@@ -1,3 +1,10 @@
+PATH
+  remote: .
+  specs:
+    rack-locale (0.0.1)
+      geoip
+      rack
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -12,7 +19,6 @@ GEM
     rack (1.4.1)
     rack-test (0.6.1)
       rack (>= 1.0)
-    rb-fsevent (0.9.0)
     rspec (2.9.0)
       rspec-core (~> 2.9.0)
       rspec-expectations (~> 2.9.0)
@@ -27,9 +33,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  geoip
   guard-rspec
-  rack
+  rack-locale!
   rack-test
-  rb-fsevent
   rspec

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rack-locale (0.0.1)
+    rack-geo-locale (0.0.1)
       geoip
       rack
 
@@ -34,6 +34,6 @@ PLATFORMS
 
 DEPENDENCIES
   guard-rspec
-  rack-locale!
+  rack-geo-locale!
   rack-test
   rspec

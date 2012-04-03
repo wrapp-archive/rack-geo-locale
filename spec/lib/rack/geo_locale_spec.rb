@@ -1,14 +1,14 @@
 require 'rack/test'
-require 'rack/locale'
+require 'rack/geo_locale'
 require 'geoip'
 
 include Rack::Test::Methods
 
 def app
-  Rack::Locale.new(proc {|env| [200, {}, 'hello']})
+  Rack::GeoLocale.new(proc {|env| [200, {}, 'hello']})
 end
 
-describe Rack::Locale do
+describe Rack::GeoLocale do
   describe "GeoIP" do
     before do
       geoip = double("geoip")

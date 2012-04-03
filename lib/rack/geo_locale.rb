@@ -1,7 +1,7 @@
 require 'ostruct'
 
 module Rack
-  class Locale
+  class GeoLocale
     def initialize(app)
       @app = app
 

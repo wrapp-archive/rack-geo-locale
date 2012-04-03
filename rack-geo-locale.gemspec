@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name        = "rack-locale"
+  s.name        = "rack-geo-locale"
   s.version     = File.read('VERSION').to_s
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Joakim Ekberg"]
   s.email       = ["joakim@wrapp.com"]
-  s.homepage    = "https://github.com/wrapp/rack-locale"
-  s.summary     = "Rack middleware used to guess the visitors country and language based on GeoIP and HTTP_ACCEPT_LANGUAGE."
+  s.homepage    = "https://github.com/wrapp/rack-geo-locale"
+  s.summary     = "Rack middleware used to guess the visitors locale based on GeoIP and HTTP_ACCEPT_LANGUAGE."
   s.description = "Simple Rack middleware for setting the locale.country via GeoIP using the MaxMind GeoIP database, and setting the locale.languages based on the HTTP_ACCEPT_LANGUAGE header."
 
 

@@ -24,6 +24,8 @@ module Rack
 
             return result if result != "--"
           end
+        else
+          puts "WARNING: Didn't find geoip database."
         end
 
         nil

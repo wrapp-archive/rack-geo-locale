@@ -18,17 +18,15 @@ module Rack
 
     private
       def parse_country(env)
-        remote_addr = env["REMOTE_ADDR"]
+        if database?
+          if remote_addr = env["REMOTE_ADDR"]
+            result = geoip.country(remote_addr).country_code2
 
-        return nil unless remote_addr
-
-        result = geoip.country(remote_addr).country_code2
-
-        if result != "--"
-          result
-        else
-          nil
+            return result if result != "--"
+          end
         end
+
+        nil
       end
 
       def parse_locale(env)

@@ -43,37 +43,45 @@ describe Rack::GeoLocale do
   describe "parsing HTTP_ACCEPT_LANGUAGE" do
     it "should return an empty result if no HTTP_ACCEPT_LANGUAGE passed" do
       get '/', {}, {}
-      last_request.env["locale.languages"].should == []
+      last_request.env["locale.language"].should == nil
     end
 
     it "should parse HTTP_ACCEPT_LANGUAGE 'en'" do
       get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "en"}
-      last_request.env["locale.languages"].should == ["en"]
+      last_request.env["locale.language"].should == "en"
     end
 
     it "should parse HTTP_ACCEPT_LANGUAGE 'sv'" do
       get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "sv"}
-      last_request.env["locale.languages"].should == ["sv"]
+      last_request.env["locale.language"].should == "sv"
     end
 
     it "should parse HTTP_ACCEPT_LANGUAGE 'sv;q=0.1, en'" do
       get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "sv;q=0.1, en"}
-      last_request.env["locale.languages"].should == ["en", "sv"]
+      last_request.env["locale.language"].should == "en"
     end
 
     it "should parse HTTP_ACCEPT_LANGUAGE 'sv, en'" do
       get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "sv, en"}
-      last_request.env["locale.languages"].should == ["sv", "en"]
+      last_request.env["locale.language"].should == "sv"
     end
 
     it "should parse HTTP_ACCEPT_LANGUAGE 'en;q=0.4, de;q=0.7'" do
       get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "en;q=0.4, de;q=0.7"}
-      last_request.env["locale.languages"].should == ["de", "en"]
+      last_request.env["locale.language"].should == "de"
     end
 
     it "should parse HTTP_ACCEPT_LANGUAGE 'en-US;q=0.7'" do
       get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "en-US;q=0.7"}
-      last_request.env["locale.languages"].should == ["en"]
+      last_request.env["locale.language"].should == "en"
+    end
+  end
+
+  describe "missing database" do
+    it "should fallback on HTTP_ACCEPT_LANGUAGE for country" do
+      get '/', {}, {"HTTP_ACCEPT_LANGUAGE" => "en-US", "REMOTE_ADDR" => "10.0.0.1"}
+      last_request.env["locale.language"].should == "en"
+      last_request.env["locale.country"].should == "US"
     end
   end
 end

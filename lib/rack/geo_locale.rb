@@ -1,16 +1,17 @@
-require 'ostruct'
+require 'geoip'
 
 module Rack
   class GeoLocale
     def initialize(app)
       @app = app
-
-      @geoip = GeoIP.new(ENV["GEOIP_DATABASE"])
     end
 
     def call(env)
-      env["locale.country"] = parse_country(env)
-      env["locale.languages"] = parse_languages(env)
+      env["locale.language"], env["locale.country"] = parse_locale(env)
+
+      if country = parse_country(env)
+        env["locale.country"] = country
+      end
 
       @app.call(env)
     end
@@ -21,7 +22,7 @@ module Rack
 
         return nil unless remote_addr
 
-        result = @geoip.country(remote_addr).country_code2
+        result = geoip.country(remote_addr).country_code2
 
         if result != "--"
           result
@@ -30,7 +31,7 @@ module Rack
         end
       end
 
-      def parse_languages(env)
+      def parse_locale(env)
         env["HTTP_ACCEPT_LANGUAGE"] ||= ""
         language_ranges = env["HTTP_ACCEPT_LANGUAGE"].split(",")
         language_ranges.map do |language_range|
@@ -38,10 +39,30 @@ module Rack
 
           locale, q = language_range.split(";q=")
 
-          language = locale.strip.split("-").first
+          language, country = locale.strip.split("-")
 
-          {:language => language, :q => q}
-        end.sort {|x, y| y[:q] <=> x[:q]}.map{|lr| lr[:language]}
+          {:language => language, :country => country, :q => q}
+        end.sort {|x, y| y[:q] <=> x[:q]}.map{|o| [o[:language], o[:country]]}.first
+      end
+
+      def database?
+        if ENV["GEOIP_DATABASE"]
+          ::File.exist? ENV["GEOIP_DATABASE"]
+        else
+          false
+        end
+      end
+
+      def database
+        ENV["GEOIP_DATABASE"]
+      end
+
+      def geoip
+        if database?
+          GeoIP.new(database)
+        else
+          nil
+        end
       end
   end
 end

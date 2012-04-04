@@ -24,6 +24,11 @@ describe Rack::GeoLocale do
       last_request.env["locale.country"].should == nil
     end
 
+    it "should take HTTP_X_FORWARDED_FOR before REMOTE_ADDR field" do
+      get '/', {}, {"REMOTE_ADDR" => "10.0.0.1", "HTTP_X_FORWARDED_FOR" => "10.0.0.2"}
+      last_request.env["locale.country"].should == "US"
+    end
+
     it "should resolve 10.0.0.1 to SE" do
       get '/', {}, {"REMOTE_ADDR" => "10.0.0.1"}
       last_request.env["locale.country"].should == "SE"

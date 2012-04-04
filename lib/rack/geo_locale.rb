@@ -25,9 +25,13 @@ module Rack
       def parse_country(env)
         if database?
           if remote_addr = env["REMOTE_ADDR"]
+            remote_addr = env["HTTP_X_FORWARDED_FOR"] if env["HTTP_X_FORWARDED_FOR"]
+
             result = geoip.country(remote_addr).country_code2
 
             return result if result != "--"
+          else
+            puts "WARNING: Didn't find env['REMOTE_ADDR']"
           end
         else
           puts "WARNING: Didn't find geoip database."

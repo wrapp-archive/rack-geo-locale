@@ -1,8 +1,13 @@
 require 'geoip'
+require 'open-uri'
 
 module Rack
   class GeoLocale
+    DATABASE = "tmp/geoip_database.dat"
+
     def initialize(app)
+      fetch_database
+
       @app = app
     end
 
@@ -46,20 +51,26 @@ module Rack
       end
 
       def database?
-        if ENV["GEOIP_DATABASE"]
-          ::File.exist? ENV["GEOIP_DATABASE"]
-        else
-          false
-        end
+        ::File.exist? DATABASE
       end
 
-      def database
-        ENV["GEOIP_DATABASE"]
+      def fetch_database
+        if ENV["GEOIP_DATABASE_URI"]
+          puts "-> Fetching #{ENV["GEOIP_DATABASE_URI"]}"
+
+          open(ENV["GEOIP_DATABASE_URI"]) do |src|
+            data = Zlib::GzipReader.new(StringIO.new(src.read)).read
+
+            open(DATABASE, "wb") {|dst| dst.write(data)}
+          end
+        else
+          puts "WARNING: Set the ENV['GEOIP_DATABASE_URI'] to the location of your .gz database file."
+        end
       end
 
       def geoip
         if database?
-          GeoIP.new(database)
+          GeoIP.new(DATABASE)
         else
           nil
         end

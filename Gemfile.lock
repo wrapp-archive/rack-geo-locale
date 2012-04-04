@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rack-geo-locale (0.0.4)
+    rack-geo-locale (0.0.5)
       geoip
       rack
 

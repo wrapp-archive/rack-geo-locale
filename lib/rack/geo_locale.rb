@@ -12,11 +12,17 @@ module Rack
     end
 
     def call(env)
-      env["locale.language"], env["locale.country"] = parse_locale(env)
+      language, country = parse_locale(env)
 
-      if country = parse_country(env)
-        env["locale.country"] = country
+      if c = parse_country(env)
+        country = c
       end
+
+      language.downcase! if language
+      country.upcase! if country
+
+      env["locale.language"] = language
+      env["locale.country"] = country
 
       @app.call(env)
     end

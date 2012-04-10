@@ -30,20 +30,27 @@ module Rack
     private
       def parse_country(env)
         if database?
-          if remote_addr = env["REMOTE_ADDR"]
-            remote_addr = env["HTTP_X_FORWARDED_FOR"] if env["HTTP_X_FORWARDED_FOR"]
+          if addr = env["REMOTE_ADDR"]
+            addr = env["HTTP_X_FORWARDED_FOR"] if env["HTTP_X_FORWARDED_FOR"]
+            addr = addr.split(",").first.strip
 
-            result = geoip.country(remote_addr).country_code2
+            puts "INFO: Trying to lookup #{addr}"
 
-            return result if result != "--"
+            result = @geoip.country(addr).country_code2
+
+            if result != "--"
+              puts "INFO: Found country for #{addr} #{result}"
+
+              result
+            else
+              puts "INFO: Didn't find country for #{addr}"
+            end
           else
             puts "WARNING: Didn't find env['REMOTE_ADDR']"
           end
         else
           puts "WARNING: Didn't find geoip database."
         end
-
-        nil
       end
 
       def parse_locale(env)

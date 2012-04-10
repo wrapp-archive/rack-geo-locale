@@ -6,7 +6,7 @@ module Rack
     DATABASE = "tmp/geoip_database.dat"
 
     def initialize(app)
-      fetch_database
+      @geoip = fetch_database
 
       @app = app
     end
@@ -61,27 +61,20 @@ module Rack
       end
 
       def database?
-        ::File.exist? DATABASE
+        @geoip != nil
       end
 
       def fetch_database
         if ENV["GEOIP_DATABASE_URI"]
           puts "-> Fetching #{ENV["GEOIP_DATABASE_URI"]}"
 
-          open(ENV["GEOIP_DATABASE_URI"]) do |src|
-            data = Zlib::GzipReader.new(StringIO.new(src.read)).read
+          `curl --silent -o #{DATABASE}.gz #{ENV["GEOIP_DATABASE_URI"]}`
+          `gunzip -f #{DATABASE}.gz`
 
-            open(DATABASE, "wb") {|dst| dst.write(data)}
-          end
-        else
-          puts "WARNING: Set the ENV['GEOIP_DATABASE_URI'] to the location of your .gz database file."
-        end
-      end
-
-      def geoip
-        if database?
           GeoIP.new(DATABASE)
         else
+          puts "WARNING: Set the ENV['GEOIP_DATABASE_URI'] to the location of your .gz database file."
+
           nil
         end
       end

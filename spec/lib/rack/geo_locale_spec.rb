@@ -1,6 +1,6 @@
 require 'rack/test'
-require 'rack/geo_locale'
 require 'geoip'
+require 'rack/geo_locale'
 
 include Rack::Test::Methods
 
@@ -24,9 +24,19 @@ describe Rack::GeoLocale do
       last_request.env["locale.country"].should == nil
     end
 
+    it "should handle only passing a HTTP_X_FORWARDED_FOR field" do
+      get '/', {}, {"HTTP_X_FORWARDED_FOR" => "10.0.0.1"}
+      last_request.env["locale.country"].should == "SE"
+    end
+
     it "should take HTTP_X_FORWARDED_FOR before REMOTE_ADDR field" do
       get '/', {}, {"REMOTE_ADDR" => "10.0.0.1", "HTTP_X_FORWARDED_FOR" => "10.0.0.2"}
       last_request.env["locale.country"].should == "US"
+    end
+
+    it "should handle several IP adresses in the REMOTE_ADDR field" do
+      get '/', {}, {"REMOTE_ADDR" => "10.0.0.1, 127.0.0.1"}
+      last_request.env["locale.country"].should == "SE"
     end
 
     it "should resolve 10.0.0.1 to SE" do

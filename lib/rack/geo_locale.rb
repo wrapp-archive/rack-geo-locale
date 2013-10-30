@@ -36,7 +36,11 @@ module Rack
 
             # puts "INFO: Trying to lookup #{addr}"
 
-            result = @geoip.country(addr).country_code2
+            result = '--'
+            country = @geoip.country(addr)
+            if country
+              result = country.country_code2
+            end
 
             if result != "--"
               # puts "INFO: Found country for #{addr} #{result}"
